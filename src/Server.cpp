@@ -72,7 +72,7 @@ string Server::createFilePath(Request request) const {
 }
 
 Server::~Server() {
-    close(sockfd);
+    Close(sockfd);
 }
 
 

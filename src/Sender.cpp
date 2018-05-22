@@ -1,99 +1,16 @@
 // Kamil Breczko (280 990)
 
 #include "Sender.h"
+#include "ResponseBuilder.h"
 
 string Sender::constructResponse(Request request, string filePath) {
-    uint32_t code = createCode(request, filePath);
-    string body = buildBody(code, filePath);
-    string header = buildHeader(code, filePath, body);
+    ResponseBuilder responseBuilder;
+    uint32_t code = responseBuilder.createCode(request, filePath);
+    string body = responseBuilder.buildBody(code, filePath);
+    string header = responseBuilder.buildHeader(code, filePath, body);
     return header + "\r\n" + body;
 }
 
-uint32_t Sender::createCode(Request request, string filePath) {
-    if (request.method != "GET")
-        return 501;
-
-    if (request.path.find("../") != string::npos)
-        return 403;
-
-    struct stat buf{};
-    stat(filePath.c_str(), &buf);
-
-    if (S_ISDIR(buf.st_mode))
-        return 301;
-
-    if (S_ISREG(buf.st_mode))
-        return 200;
-
-    return 404;
-}
-
-string Sender::buildBody(uint32_t code, string filePath) {
-    if (code == 301)
-        filePath += "index.html";
-    if (code == 200 || code == 301) {
-        ifstream file(filePath, ios::binary);
-        ostringstream ostrm;
-        ostrm << file.rdbuf();
-        return string(ostrm.str());
-    }
-    if (code == 404)
-        return "<b>404</b> Sorry, file not found :(";
-    if (code == 403)
-        return "<b>Forbidden</b>";
-    if (code == 501)
-        return "<b>Not Implemented</b>";
-
-    throw runtime_error("Unknown response code \n");
-}
-
-string Sender::buildHeader(uint32_t code, string filePath, string body) {
-    string header = "HTTP/1.1 " + to_string(code) + ' ' + createMessage(code) + "\r\n";
-    header += "Content-Type: " + createContentType(code, filePath) + "\r\n";
-    header += "Content-Length: " + to_string(body.length()) + "\r\n";
-    return header;
-}
-
-string Sender::createContentType(uint32_t code, string filePath) {
-    string extension = filePath.substr(filePath.find_last_of('.') + 1);
-
-    if (code != 200)
-        return "text/html";
-    if (extension == "txt")
-        return "text/plain";
-    if (extension == "html")
-        return "text/html";
-    if (extension == "css")
-        return "text/css";
-    if (extension == "jpg")
-        return "image/jpeg";
-    if (extension == "jpeg")
-        return "image/jpeg";
-    if (extension == "png")
-        return "image/png";
-    if (extension == "pdf")
-        return "application/pdf";
-
-    return "application/octet-stream";
-}
-
-string Sender::createMessage(uint32_t code) {
-    switch (code) {
-        case 200:
-            return "OK";
-        case 301:
-            return "Moved Permanently";
-        case 403:
-            return "Forbidden";
-        case 404:
-            return "Not Found";
-        case 501:
-            return "Not Implemented";
-    }
-
-    throw runtime_error("Unknown response code \n");
-}
-
-void Sender::send(int conn_sockfd, string packet) {
-    Send(conn_sockfd, packet.c_str(), packet.length(), 0);
+void Sender::send(int conn_sockfd, string response) {
+    Send(conn_sockfd, response.c_str(), response.length(), 0);
 }

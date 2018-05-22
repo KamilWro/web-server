@@ -4,8 +4,8 @@ CXXFLAGS = -std=c++11 -Wall -Wextra
 
 CXX = g++
 
-main : main.o Server.o Sockwrap.o Sender.o Receiver.o
-	$(CXX) $(CXXFLAGS) -o server main.o Server.o Sockwrap.o Sender.o Receiver.o
+main : main.o Server.o Sockwrap.o Sender.o Receiver.o ResponseBuilder.o
+	$(CXX) $(CXXFLAGS) -o server main.o Server.o Sockwrap.o Sender.o Receiver.o ResponseBuilder.o
 
 main.o : main.cpp
 	$(CXX) -c $(CXXFLAGS) main.cpp -o  main.o
@@ -21,6 +21,9 @@ Sender.o : Sender.cpp Sender.h Request.h
 
 Receiver.o : Receiver.cpp Receiver.h Request.h
 	$(CXX) -c $(CXXFLAGS) Receiver.cpp -o  Receiver.o
+
+ResponseBuilder.o : ResponseBuilder.cpp ResponseBuilder.h Request.h
+	$(CXX) -c $(CXXFLAGS) ResponseBuilder.cpp -o  ResponseBuilder.o
 
 clean:
 	rm -rf *.o
