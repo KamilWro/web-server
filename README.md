@@ -15,7 +15,7 @@ Skonfiguruj lokalne rozwiązywanie nazw DNS dopisując do pliku /etc/hosts nast�
 Od tej pory odwołania do powyższych domen będą kierowane do lokalnego komputera. </br>
  </br>
 ### Uruchomienie:
-`./server port dictionary` </br>
+`./server port directory` </br>
 `port` - numer portu, na którym serwer będzie oczekiwać na przychodzące połączenia (np. `8888`) </br>
 `directory` - katalog zawierającym strony WWW (np. `../strony-www/`) </br>
  </br>
