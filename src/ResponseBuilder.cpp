@@ -9,13 +9,10 @@ uint32_t ResponseBuilder::createCode(Request request, string filePath) {
     if (request.path.find("../") != string::npos)
         return 403;
 
-    struct stat buf{};
-    stat(filePath.c_str(), &buf);
-
-    if (S_ISDIR(buf.st_mode))
+    if (isDirectory(filePath) && isRegular(filePath + "index.html"))
         return 301;
 
-    if (S_ISREG(buf.st_mode))
+    if (isRegular(filePath))
         return 200;
 
     return 404;
@@ -47,6 +44,23 @@ string ResponseBuilder::buildHeader(uint32_t code, string filePath, string body)
     return header;
 }
 
+string ResponseBuilder::createMessage(uint32_t code) {
+    switch (code) {
+        case 200:
+            return "OK";
+        case 301:
+            return "Moved Permanently";
+        case 403:
+            return "Forbidden";
+        case 404:
+            return "Not Found";
+        case 501:
+            return "Not Implemented";
+    }
+
+    throw runtime_error("Unknown response code \n");
+}
+
 string ResponseBuilder::createContentType(uint32_t code, string filePath) {
     string extension = filePath.substr(filePath.find_last_of('.') + 1);
 
@@ -70,19 +84,14 @@ string ResponseBuilder::createContentType(uint32_t code, string filePath) {
     return "application/octet-stream";
 }
 
-string ResponseBuilder::createMessage(uint32_t code) {
-    switch (code) {
-        case 200:
-            return "OK";
-        case 301:
-            return "Moved Permanently";
-        case 403:
-            return "Forbidden";
-        case 404:
-            return "Not Found";
-        case 501:
-            return "Not Implemented";
-    }
+bool ResponseBuilder::isDirectory(string filePath) {
+    struct stat buf{};
+    stat(filePath.c_str(), &buf);
+    return S_ISDIR(buf.st_mode);
+}
 
-    throw runtime_error("Unknown response code \n");
+bool ResponseBuilder::isRegular(string filePath) {
+    struct stat buf{};
+    stat(filePath.c_str(), &buf);
+    return S_ISREG(buf.st_mode);
 }

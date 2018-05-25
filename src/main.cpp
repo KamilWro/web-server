@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include "Server.h"
 
-#define MAX_PORT 0xFFFF
+#define MAX_PORT 65535
 #define MIN_PORT 0
 
 using namespace std;

@@ -17,16 +17,23 @@ Request Receiver::receiveHTTP(int conn_sockfd) {
 }
 
 string Receiver::extractMethod(string request) {
-    return request.substr(0, request.find(' '));
+    return request.substr(0, find(request, " "));
 }
 
 string Receiver::extractPath(string request) {
-    request = request.substr(request.find(' ') + 1);
-    return request.substr(0, request.find(' '));
+    request = request.substr(find(request, " ") + 1);
+    return request.substr(0, find(request, " "));
 }
 
 string Receiver::extractHeader(string request, string key) {
-    request = request.substr(request.find(key + ": ") + key.length() + 2);
-    return request.substr(0, request.find('\r'));
+    request = request.substr(find(request, key + ": ") + key.length() + 2);
+    return request.substr(0, find(request, "\r"));
+}
 
+size_t Receiver::find(string data, string pattern) {
+    size_t pos = data.find(pattern);
+    if (pos == string::npos)
+        throw runtime_error("The " + pattern + " key was not found in the data \n");
+
+    return pos;
 }

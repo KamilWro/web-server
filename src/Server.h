@@ -15,8 +15,6 @@
 #include <sys/stat.h>
 
 #define QUEUE_SIZE 64
-#define WAIT_SECONDS 1
-#define WAIT_MICROSECUNDS 0
 
 using namespace std;
 

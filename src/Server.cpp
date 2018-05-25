@@ -29,30 +29,35 @@ void Server::run() {
         struct timeval tv{};
 
         while (true) {
-            tv.tv_sec = WAIT_SECONDS;
-            tv.tv_usec = WAIT_MICROSECUNDS;
+            tv.tv_sec = 1;
+            tv.tv_usec = 0;
 
             int ready = Select(conn_sockfd + 1, &descriptors, NULL, NULL, &tv);
 
             if (ready == 0)
                 break;
 
-            Request request("", "", "", "");
-            string filePath = "";
+            Request request("", "", "", "close");
+            string filePath;
+
             try {
                 request = receiver.receiveHTTP(conn_sockfd);
                 filePath = createFilePath(request);
                 cout << "Request {" << request.method << " " << filePath << ", connection: " << request.connection
                      << "}" << endl;
             } catch (const exception &e) {
-                cerr << "invalid data received" << endl;
+                cerr << "Invalid data received" << endl;
             }
-            string response = sender.constructResponse(request, filePath);
-            sender.send(conn_sockfd, response);
+
+            try {
+                string response = sender.constructResponse(request, filePath);
+                sender.send(conn_sockfd, response);
+            } catch (const exception &e) {
+                cerr << "Message has not been sent" << endl;
+            }
 
             if (request.connection == "close")
                 break;
-
         }
 
         Close(conn_sockfd);
@@ -60,7 +65,8 @@ void Server::run() {
 }
 
 string Server::createFilePath(Request request) const {
-    string host = request.host.substr(0, request.host.find_last_of(':'));
+    string host = request.host;
+    host = host.substr(0, host.find_last_of(':'));
     string filePath = directory + "/" + host + request.path;
 
     struct stat buf{};
@@ -68,13 +74,10 @@ string Server::createFilePath(Request request) const {
 
     if (S_ISDIR(buf.st_mode) && filePath[filePath.length() - 1] != '/')
         filePath += '/';
+
     return filePath;
 }
 
 Server::~Server() {
     Close(sockfd);
 }
-
-
-
-

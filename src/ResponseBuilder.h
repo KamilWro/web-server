@@ -20,7 +20,12 @@ class ResponseBuilder {
 
     string createMessage(uint32_t code);
 
+    bool isDirectory(string filePath);
+
+    bool isRegular(string filePath);
+
 public:
+
     string buildBody(uint32_t code, string filePath);
 
     string buildHeader(uint32_t code, string filePath, string body);

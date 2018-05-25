@@ -19,6 +19,8 @@ class Receiver {
 
 public:
     Request receiveHTTP(int conn_sockfd);
+
+    size_t find(string data, string pattern);
 };
 
 
