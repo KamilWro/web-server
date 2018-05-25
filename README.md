@@ -19,4 +19,7 @@ Od tej pory odwołania do powyższych domen będą kierowane do lokalnego komput
 `port` - numer portu, na którym serwer będzie oczekiwać na przychodzące połączenia (np. `8888`) </br>
 `directory` - katalog zawierającym strony WWW (np. `../strony-www/`) </br>
  </br>
-następnie w przeglądarce wpisać adres: `domena1.sieci.edu:8888/` </br>
+## Testowanie:
+- w przeglądarce wpisać adres: `domena1.sieci.edu:8888/` </br>
+- `echo incorrect data | nc domena1.sieci.edu 8888` </br>
+- `echo incorrect data | telnet domena1.sieci.edu 8888` </br>
