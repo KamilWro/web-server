@@ -1,5 +1,5 @@
 # web-server
-Implementacja prostego serwera WWW, obsługujący żądania protokołu komunikacyjnego HTTP. Wyświeta strony z zadanego katalogu</br>
+Implementacja prostego serwera WWW, obsługujący żądania protokołu komunikacyjnego HTTP. Wyświeta strony z zadanego katalogu. </br> </br>
 Realizowane zadania:
 - [x] obsługa żądań GET (pole Host i pole Connection)
 - [x] odsyła informacje: kod odpowiedzi, pole Content-Type i pole Content-Length.

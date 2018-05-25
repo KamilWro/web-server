@@ -29,4 +29,4 @@ clean:
 	rm -rf *.o
 
 distclean:
-	rm -rf *.o router .*.swp
+	rm -rf *.o server .*.swp
