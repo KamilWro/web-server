@@ -31,7 +31,7 @@ public:
 
     void run();
 
-    void tryConnect() const;
+    void makeConnection() const;
 };
 
 
