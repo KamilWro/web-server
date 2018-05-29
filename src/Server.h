@@ -30,6 +30,8 @@ public:
     ~Server();
 
     void run();
+
+    void tryConnect() const;
 };
 
 

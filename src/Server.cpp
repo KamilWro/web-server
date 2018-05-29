@@ -18,50 +18,59 @@ Server::Server(uint16_t port, string directory) : directory(directory) {
 }
 
 void Server::run() {
+    while (true) {
+        try {
+            tryConnect();
+        } catch (const exception &e) {
+            cerr << "There was a problem with the connection" << endl;
+        }
+    }
+}
+
+void Server::tryConnect() const {
     Receiver receiver;
     Sender sender;
+
+    int conn_sockfd = Accept(sockfd, NULL, NULL);
+
+    fd_set descriptors;
+    FD_ZERO (&descriptors);
+    FD_SET (conn_sockfd, &descriptors);
+    struct timeval tv{};
+
     while (true) {
-        int conn_sockfd = Accept(sockfd, NULL, NULL);
+        tv.tv_sec = 1;
+        tv.tv_usec = 0;
 
-        fd_set descriptors;
-        FD_ZERO (&descriptors);
-        FD_SET (conn_sockfd, &descriptors);
-        struct timeval tv{};
+        int ready = Select(conn_sockfd + 1, &descriptors, NULL, NULL, &tv);
 
-        while (true) {
-            tv.tv_sec = 1;
-            tv.tv_usec = 0;
+        if (ready == 0)
+            break;
 
-            int ready = Select(conn_sockfd + 1, &descriptors, NULL, NULL, &tv);
+        Request request("", "", "", "close");
+        string filePath;
 
-            if (ready == 0)
-                break;
-
-            Request request("", "", "", "close");
-            string filePath;
-
-            try {
-                request = receiver.receiveHTTP(conn_sockfd);
-                filePath = createFilePath(request);
-                cout << "Request {" << request.method << " " << filePath << ", connection: " << request.connection
-                     << "}" << endl;
-            } catch (const exception &e) {
-                cerr << "Invalid data received" << endl;
-            }
-
-            try {
-                string response = sender.constructResponse(request, filePath);
-                sender.send(conn_sockfd, response);
-            } catch (const exception &e) {
-                cerr << "Message has not been sent" << endl;
-            }
-
-            if (request.connection == "close")
-                break;
+        try {
+            request = receiver.receiveHTTP(conn_sockfd);
+            filePath = createFilePath(request);
+            cout << "Request {" << request.method << " " << filePath << ", connection: " << request.connection << "}"
+                 << endl;
+        } catch (const exception &e) {
+            cerr << "Invalid data received" << endl;
         }
 
-        Close(conn_sockfd);
+        try {
+            string response = sender.constructResponse(request, filePath);
+            sender.send(conn_sockfd, response);
+        } catch (const exception &e) {
+            cerr << "Message has not been sent" << endl;
+        }
+
+        if (request.connection == "close")
+            break;
     }
+
+    Close(conn_sockfd);
 }
 
 string Server::createFilePath(Request request) const {
