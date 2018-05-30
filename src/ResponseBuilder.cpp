@@ -34,7 +34,7 @@ string ResponseBuilder::buildBody(uint32_t code, string filePath) {
     if (code == 501)
         return "<b>Not Implemented</b>";
 
-    throw runtime_error("Unknown response code \n");
+    throw runtime_error("Unknown response code");
 }
 
 string ResponseBuilder::buildHeader(uint32_t code, string filePath, string body) {
@@ -58,7 +58,7 @@ string ResponseBuilder::createMessage(uint32_t code) {
             return "Not Implemented";
     }
 
-    throw runtime_error("Unknown response code \n");
+    throw runtime_error("Unknown response code");
 }
 
 string ResponseBuilder::createContentType(uint32_t code, string filePath) {

@@ -33,7 +33,7 @@ string Receiver::extractHeader(string request, string key) {
 size_t Receiver::find(string data, string pattern) {
     size_t pos = data.find(pattern);
     if (pos == string::npos)
-        throw runtime_error("The " + pattern + " key was not found in the data \n");
+        throw runtime_error("The '" + pattern + "' key was not found in the data");
 
     return pos;
 }

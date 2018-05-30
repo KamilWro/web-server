@@ -27,7 +27,7 @@ int main(int argc, char const *argv[]) {
         Server server(port, directory);
         server.run();
     } catch (const exception &e) {
-        cerr << e.what();
+        cerr << e.what() << endl;
         return -1;
     }
 
@@ -42,13 +42,13 @@ void validInput(const char *port_s, const char *directory) {
     try {
         port = stoi(port_s);
     } catch (const exception &e) {
-        throw invalid_argument("Port must be positive number \n");
+        throw invalid_argument("Port must be positive number");
     }
 
     if (port < MIN_PORT || port > MAX_PORT)
-        throw invalid_argument("Port must be between 0 and 65535 \n");
+        throw invalid_argument("Port must be between 0 and 65535");
 
     if (!S_ISDIR(buf.st_mode))
-        throw invalid_argument("Second argument is not directory \n");
+        throw invalid_argument("Second argument is not directory");
 
 }

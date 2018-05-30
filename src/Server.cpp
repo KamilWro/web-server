@@ -51,17 +51,16 @@ void Server::makeConnection() const {
                 request = receiver.receiveHTTP(conn_sockfd);
                 filePath = createFilePath(request);
                 cout << "Request {" << request.method << " " << filePath << ", connection: " << request.connection
-                     << "}"
-                     << endl;
+                     << "}" << endl;
             } catch (const exception &e) {
-                cerr << "Invalid data received" << endl;
+                cerr << "Invalid data received. " << e.what() << endl;
             }
 
             try {
                 string response = sender.constructResponse(request, filePath);
                 sender.send(conn_sockfd, response);
             } catch (const exception &e) {
-                cerr << "Message has not been sent" << endl;
+                cerr << "Message has not been sent. " << e.what() << endl;
             }
 
             if (request.connection == "close")
@@ -70,7 +69,7 @@ void Server::makeConnection() const {
 
         Close(conn_sockfd);
     } catch (const exception &e) {
-        cerr << "There was a problem with the connection" << endl;
+        cerr << "There was a problem with the connection. " << e.what() << endl;
     }
 }
 
